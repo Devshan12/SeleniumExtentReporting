@@ -4,85 +4,105 @@ import Pages.HomePage;
 import Pages.ProductsPage;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import com.aventstack.extentreports.reporter.configuration.Theme;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.bidi.browsingcontext.BrowsingContext;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.testng.ITestResult;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import static Pages.ProductsPage.formalShoes_verifyTitle;
-import static Pages.ProductsPage.sneakers_verifyTitle;
+import org.testng.asserts.SoftAssert;
+import java.io.File;
+import java.io.IOException;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FileUtils;
 
 public class SeleniumTest {
+
     public static WebDriver driver;
     public static ExtentReports extent;
     public static ExtentTest test;
 
-    @BeforeSuite
-    public void setup() throws InterruptedException {
+    @BeforeTest
+    public static void setup() throws InterruptedException {
         driver = new ChromeDriver();
         driver.get("https://anupdamoda.github.io/AceOnlineShoePortal/index.html");
+        // test on full screen
         driver.manage().window().maximize();
 
-        ExtentSparkReporter spark = new ExtentSparkReporter("target/spark.html");
+        ExtentSparkReporter spark = new ExtentSparkReporter("target/Spark.html");
+        spark.config().setTheme(Theme.DARK);
+        spark.config().setDocumentTitle("Automation Report");
+        spark.config().setReportName("Extent Reports Demo");
         extent = new ExtentReports();
         extent.attachReporter(spark);
 
-        // Navigation to Online Products Page
         HomePage.click_hamburger_menu();
         HomePage.click_onlineProduct_link();
     }
 
+    public static String capture(WebDriver driver) throws IOException {
+        File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        File destFile = new File("src/../ExecImages/" + System.currentTimeMillis() + ".png");
 
+        // Use FileUtils to copy the screenshot file to the destination
+        FileUtils.copyFile(scrFile, destFile);
 
-    @Test(groups = "validateTitles_onlineProducts", alwaysRun = true)
-    public void validateTitles_onlineProducts() throws InterruptedException {
-        test = extent.createTest("Validate Shoe Titles on Product Page", "This test validates that the different shoe types are correct on Online Products Page");
-
-        try {
-            ProductsPage.formalShoes_verifyTitle();
-            test.log(Status.PASS, "Title verification passed for Formal Shoes");
-        } catch (AssertionError e) {
-            test.log(Status.FAIL, "Title verification failed for Formal Shoes");
-        }
-
-        try {
-            ProductsPage.sportsShoes_verifyTitle();
-            test.log(Status.PASS, "Title verification passed for Sports Shoes");
-        } catch (AssertionError e) {
-            test.log(Status.FAIL, "Title verification failed for Sports Shoes");
-        }
-
-        try {
-            ProductsPage.sneakers_verifyTitle();
-            test.log(Status.PASS, "Title verification passed for Sneakers");
-        } catch (AssertionError e) {
-            test.log(Status.FAIL, "Title verification failed for Sneakers");
-        }
-
-        extent.flush();
+        return destFile.getAbsolutePath();
     }
 
 
 
-    @Test(groups = "validateTitles_onlineProducts")
-    public void validateFirstFormalShoes() {
-        test = extent.createTest("Validate First Formal Shoe", "This test validates First Formal Shoe on Online Products Page");
+
+    @Test
+    void validateTitles_OnlineProducts() {
+        test = extent.createTest("Validate Shoe Titles on Products Page",
+                "This test validates that the different Shoe types are correct on Online Products page");
+
+        SoftAssert softAssert = new SoftAssert();
+
         try {
-            ProductsPage.formalShoes_firstShoe_verify();
-            test.pass("Validation passed for the first formal shoe.");
+            ProductsPage.formalShoesVerifyTitle();
+        } catch (AssertionError | IOException e) {
+            test.fail("Validation failed for the Formal shoe.");
+            softAssert.fail("Validation failed for the Formal shoe.");
+        }
+
+        try {
+            ProductsPage.sportsShoesVerifyTitle();
+        } catch (AssertionError | IOException e) {
+            test.fail("Validation failed for the Sport shoe.");
+            softAssert.fail("Validation failed for the Sport shoe.");
+        }
+
+        try {
+            ProductsPage.sneakersVerifyTitle();
         } catch (AssertionError e) {
-            test.fail("Validation failed for the first formal shoe.");
+            test.fail("Validation failed for the Sneaker shoe.");
+            softAssert.fail("Validation failed for the Sneaker shoe.");
+        }
+
+        // Mark the test as failed if any soft assert failed
+        softAssert.assertAll();
+    }
+    @Test
+    void validateFirstFormalShoes() {
+        test = extent.createTest("Validate First Formal Shoe",
+                "This test validates that the First Formal Shoe is correct on Online Products page");
+
+        try {
+            ProductsPage.formalShoesFirstShoeVerify();
+            test.pass("Validation passed for the first sports shoe.");
+        } catch (AssertionError e) {
+            test.fail("Validation failed for the first sports shoe.");
             throw e; // This line ensures that the main test function fails if the validation fails
         }
     }
 
-    @Test(groups = "validateTitles_onlineProducts")
+
+    @Test
     public void validateFirstSportsShoes() {
         test = extent.createTest("Validate First Sports Shoe", "This test validates First Sports Shoe on Online Products Page");
         try {
@@ -94,10 +114,11 @@ public class SeleniumTest {
         }
     }
 
-    @AfterSuite
-    public void cleanup() {
+
+
+    @AfterTest
+    public static void cleanup() {
         extent.flush();
         driver.quit();
     }
-
 }

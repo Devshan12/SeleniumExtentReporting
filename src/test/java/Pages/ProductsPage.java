@@ -1,123 +1,96 @@
 package Pages;
 
+import Tests.SeleniumTest;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.observer.entity.MediaEntity;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 
-import static Tests.SeleniumTest.driver;
+import java.io.IOException;
+
 import static Tests.SeleniumTest.*;
 
 public class ProductsPage {
-    public static String formalShoes_xpath = "/html/body/div[2]/center/h2";
-    public static String sportsShoes_xpath = "/html/body/div[3]/center/h2";
-    public static String sneakers_xpath = "/html/body/div[4]/center/h2";
+    public static String formalShoesXpath = "/html/body/div[2]/center/h2";
+    public static String sportsShoesXpath = "/html/body/div[3]/center/h2";
+    public static String sneakersXpath = "/html/body/div[4]/center/h2";
+
+    public static String formalShoesDropdownXpath = "/html/body/div[2]/center/div/i[1]";
+    public static String sportsShoesDropdownXpath = "/html/body/div[3]/center/div/i[1]";
+
+    public static String formalShoesFirstShowName = "/html/body/div[2]/table/tbody/tr[1]/td[1]";
+    public static String sportsShoesFirstShowName = "/html/body/div[3]/table/tbody/tr[1]/td[1]";
 
 
-    public static String formalShoesDropdown_xpath = "/html/body/div[2]/center/div/i[1]";
+    public static void formalShoesVerifyTitle() throws IOException {
+        String expectedTitleFS = "Formal Shoes";
 
-    public static String sportsShoesDropdown_xpath = "/html/body/div[3]/center/div/i[1]";
+        String actualTitleFS = driver.findElement(By.xpath(formalShoesXpath)).getText().trim();
+        Assert.assertEquals(expectedTitleFS, actualTitleFS);
 
-    public static String sneakersDropdown_xpath = "/html/body/div[4]/center/div/i[1]";
+        if (!expectedTitleFS.equals(actualTitleFS)) {
+            // Capture screenshot before throwing the exception
+            test.fail(MediaEntityBuilder.createScreenCaptureFromPath(capture(driver)).build());
 
-    public static String formalShoes_firstShoeName = "/html/body/div[2]/table/tbody/tr[1]/td[1]";
-
-    public static String sportsShoes_firstShoeName = "/html/body/div[3]/table/tbody/tr[1]/td[1]";
-
-
-
-
-    public static String formalShoes_verifyTitle() {
-        String expectedTitleFs = "Formal Shoes";
-        String actualTitleFs = null;
-
-        try {
-            actualTitleFs = driver.findElement(By.xpath(formalShoes_xpath)).getText();
-            Assert.assertEquals(expectedTitleFs, actualTitleFs);
-            test.log(Status.PASS, "Test passed for title verification of formal shoes");
-        } catch (NoSuchElementException e) {
-            test.log(Status.FAIL, "Element not found for Formal Shoes title verification");
-            logErrorDetails("Formal Shoes", "Element not found");
-            throw new AssertionError("Test failed for title verification of Formal Shoes", e);
-        } catch (AssertionError e) {
-            test.log(Status.FAIL, "Test failed for title verification of formal shoes");
-
-            logErrorDetails("Formal Shoes", "Expected Title: " + expectedTitleFs + "\nActual Title: " + actualTitleFs);
-            throw new AssertionError("Test failed for title verification of Formal Shoes", e);
+            // Throw the exception
+            throw new AssertionError("Test failed for formal shoe name");
+        } else {
+            test.log(Status.PASS, "Test passed for formal shoe name");
+            test.log(Status.PASS, test.addScreenCaptureFromPath(capture(driver)) + "Test Passed");
         }
-        return expectedTitleFs;
     }
 
 
 
-    public static String sportsShoes_verifyTitle() {
-        String expectedTitleSs = "Sports Shoes";
-        String actualTitleSs = null;
+    public static void sportsShoesVerifyTitle() throws IOException {
+        String expectedTitleSS = "Sports Shoes";
 
-        try {
-            actualTitleSs = driver.findElement(By.xpath(sportsShoes_xpath)).getText();
-            Assert.assertEquals(expectedTitleSs.toLowerCase(), actualTitleSs.toLowerCase());
-            test.log(Status.PASS, "Test passed for title verification of sports shoes");
-        } catch (NoSuchElementException e) {
-            test.log(Status.FAIL, "Element not found for Sports Shoes title verification");
-            logErrorDetails("Sports Shoes", "Element not found");
-            throw new AssertionError("Test failed for title verification of Sports Shoes", e);
-        } catch (AssertionError e) {
-            test.log(Status.FAIL, "Test failed for title verification of sports shoes");
+        String actualTitleSS = driver.findElement(By.xpath(sportsShoesXpath)).getText().trim();
+        Assert.assertEquals(expectedTitleSS, actualTitleSS);
 
-            logErrorDetails("Sports Shoes", "Expected Title: " + expectedTitleSs + "\nActual Title: " + actualTitleSs);
-            throw new AssertionError("Test failed for title verification of Sports Shoes", e);
+        if (!expectedTitleSS.equals(actualTitleSS)) {
+            throw new AssertionError("Test failed for sport shoe name");
+
+        } else {
+            test.log(Status.PASS, "Test passed for sport shoe name");
+            test.log(Status.PASS, test.addScreenCaptureFromPath(capture(driver))+ "Test Passed");
         }
-        return expectedTitleSs;
     }
 
 
-    public static String sneakers_verifyTitle() {
-        String expectedTitleSn = "Sneakers";
+    public static void sneakersVerifyTitle(){
+        String expectedTitleS = "Sneakers";
 
-        String actualTitleSn = null;
-        try {
-            WebElement sneakersElement = driver.findElement(By.xpath(sneakers_xpath));
-            actualTitleSn = sneakersElement.getText();
-            Assert.assertEquals(expectedTitleSn, actualTitleSn);
-            test.log(Status.PASS, "Test passed for title verification of Sneakers");
-        } catch (NoSuchElementException e) {
-            test.log(Status.FAIL, "Element not found for Sneakers title verification");
-            logErrorDetails("Sneakers", "Element not found");
-            throw new AssertionError("Test failed for title verification of Sneakers", e);
-        } catch (AssertionError e) {
-            test.log(Status.FAIL, "Test failed for title verification of Sneakers");
-            logErrorDetails("Sneakers", "Expected Title: " + expectedTitleSn + "\nActual Title: " + actualTitleSn);
-            throw new AssertionError("Test failed for title verification of Sneakers", e);
+        String actualTitleS = driver.findElement(By.xpath(sneakersXpath)).getText().trim();
+        Assert.assertEquals(expectedTitleS, actualTitleS);
+
+        if (!expectedTitleS.equals(actualTitleS)) {
+            throw new AssertionError("Test failed for Sneakers shoe name");
+        } else {
+            test.log(Status.PASS, "Test passed for Sneakers shoe name");
         }
-        return expectedTitleSn;
     }
 
 
-    private static void logErrorDetails(String shoeType, String errorDetails) {
-        test.log(Status.FAIL, "Details for " + shoeType + ":\n" + errorDetails);
-    }
-
-
-
-    public static void formalShoes_firstShoe_verify() {
+    public static void formalShoesFirstShoeVerify(){
         String expectedFirstFormalShoe = "Classic Cheltenham";
-        driver.findElement(By.xpath(formalShoesDropdown_xpath)).click();
-        String actualFirstFormalShoe = driver.findElement(By.xpath(formalShoes_firstShoeName)).getText().trim();
+        driver.findElement(By.xpath(formalShoesDropdownXpath)).click();
+        String actualFirstFormalShoe = driver.findElement(By.xpath(formalShoesFirstShowName)).getText().trim();
         Assert.assertEquals(expectedFirstFormalShoe, actualFirstFormalShoe);
 
         if (!expectedFirstFormalShoe.equals(actualFirstFormalShoe)) {
-            throw new AssertionError("Test failed for first shoe name of formal shoe i.e Classic Cheltanham");
+            throw new AssertionError("Test failed for first shoe name of Formal shoe i.e Classic Cheltenham");
         } else {
-            test.log(Status.PASS, "Test passed for first shoe name of formal shoe i.e Classic Cheltanham");
+            test.log(Status.PASS, "Test passed for first shoe name of Formal shoe i.e Classic Cheltenham");
         }
     }
 
     public static void sportShoes_firstShoe_verify() {
         String expectedFirstSportsShoe = "Ultimate";
-        driver.findElement(By.xpath(sportsShoesDropdown_xpath)).click();
-        String actualFirstSportsShoe = driver.findElement(By.xpath(sportsShoes_firstShoeName)).getText().trim();
+        driver.findElement(By.xpath(sportsShoesDropdownXpath)).click();
+        String actualFirstSportsShoe = driver.findElement(By.xpath(sportsShoesFirstShowName)).getText().trim();
         Assert.assertEquals(expectedFirstSportsShoe, actualFirstSportsShoe);
 
         if (!expectedFirstSportsShoe.equals(actualFirstSportsShoe)) {
@@ -126,7 +99,4 @@ public class ProductsPage {
             test.log(Status.PASS, "Test passed for first shoe name of sports shoe i.e Classic Ultimate");
         }
     }
-
-
-
 }
