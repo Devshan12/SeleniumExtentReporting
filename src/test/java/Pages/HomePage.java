@@ -13,7 +13,7 @@ public class HomePage {
     }
 
     public static void click_onlineProduct_link() throws InterruptedException {
-        Thread.sleep(2000);
+        Thread.sleep(1800);
         driver.findElement(By.xpath(onlineProduct_link_xpath)).click();
     }
 }
